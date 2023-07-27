@@ -6,7 +6,6 @@ DP have been got by Tuya gateway:
 DP; DP Name
 
 1; Switch 1
-
 2; Switch 2
 
 7; Timer 1
