@@ -19,4 +19,5 @@ DP; DP Name
 110; Delay time
 111; 静止灵敏度 (?static sensitivity)
 112; 有无人状态 (?unoccupied state)
+
 Some DPs are in Chinese - (Google translation in brackets)
