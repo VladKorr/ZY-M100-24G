@@ -24,10 +24,9 @@ const definition = {
     description: 'Micro Motion Sensor v1.2 ',
     fromZigbee: [tuya.fz.datapoints],
     toZigbee: [tuya.tz.datapoints],
-    onEvent: tuya.onEventSetTime, // Add this if you are getting no converter for 'commandMcuSyncTime'
+//    onEvent: tuya.onEventSetTime, // Add this if you are getting no converter for 'commandMcuSyncTime'
     configure: tuya.configureMagicPacket,
     exposes: [
-//        e.illuminance(), 
         e.illuminance(),
         exposes.numeric('presence', ea.STATE).withDescription('Presence'),
         exposes.numeric('target_distance', ea.STATE).withDescription('Distance to target').withUnit('m'),
@@ -50,12 +49,12 @@ const definition = {
         tuyaDatapoints: [
             [104, 'illuminance', tuya.valueConverter.raw],
             [105, 'occupation', tuya.valueConverterBasic.lookup({'none': 0, 'Occupied': 1, 'Move': 2})],
-            [106, 'radar_sensitivity', tuya.valueConverter.raw],
+            [106, 'radar_sensitivity', tuya.valueConverter.divideBy10],
             [107, 'maximum_range', tuya.valueConverter.divideBy100],
 //          [108, 'minimum_range', tuya.valueConverter.raw],
             [109, 'target_distance', tuya.valueConverter.divideBy100],
             [110, 'detection_delay', tuya.valueConverter.divideBy10],
-            [111, 'static_sensitivity', tuya.valueConverter.raw],
+            [111, 'static_sensitivity', tuya.valueConverter.divideBy10],
             [112, 'presence',  tuya.valueConverterBasic.lookup({'None': 0, 'At home': 1, })]
         ],
     },
