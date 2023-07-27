@@ -4,8 +4,11 @@ https://aliexpress.ru/item/1005005682042230.html?spm=a2g2w.orderdetail.0.0.17af4
 DP have been got by Tuya gateway:
 
 DP; DP Name
+
 1; Switch 1
+
 2; Switch 2
+
 7; Timer 1
 8; Timer 2
 101; Work Mode
