@@ -24,7 +24,7 @@ const definition = {
     description: 'Micro Motion Sensor v1.2 ',
     fromZigbee: [tuya.fz.datapoints],
     toZigbee: [tuya.tz.datapoints],
-//    onEvent: tuya.onEventSetTime, // Add this if you are getting no converter for 'commandMcuSyncTime'
+    onEvent: tuya.onEventSetTime, // Add this if you are getting no converter for 'commandMcuSyncTime'
     configure: tuya.configureMagicPacket,
     exposes: [
         e.illuminance(),
