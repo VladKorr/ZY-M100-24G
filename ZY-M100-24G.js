@@ -51,7 +51,6 @@ const definition = {
             [105, 'occupation', tuya.valueConverterBasic.lookup({'none': 0, 'Occupied': 1, 'Move': 2})],
             [106, 'radar_sensitivity', tuya.valueConverter.divideBy10],
             [107, 'maximum_range', tuya.valueConverter.divideBy100],
-//          [108, 'minimum_range', tuya.valueConverter.raw],
             [109, 'target_distance', tuya.valueConverter.divideBy100],
             [110, 'detection_delay', tuya.valueConverter.divideBy10],
             [111, 'static_sensitivity', tuya.valueConverter.divideBy10],
