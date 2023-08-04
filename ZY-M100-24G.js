@@ -3,60 +3,58 @@ const tz = require('zigbee-herdsman-converters/converters/toZigbee');
 const exposes = require('zigbee-herdsman-converters/lib/exposes');
 const reporting = require('zigbee-herdsman-converters/lib/reporting');
 const extend = require('zigbee-herdsman-converters/lib/extend');
+const ota = require('zigbee-herdsman-converters/lib/ota');
+const tuya = require('zigbee-herdsman-converters/lib/tuya');
+const utils = require('zigbee-herdsman-converters/lib/utils');
+const globalStore = require('zigbee-herdsman-converters/lib/store');
 const e = exposes.presets;
 const ea = exposes.access;
-const tuya = require('zigbee-herdsman-converters/lib/tuya');
+
+const tzDatapoints = {
+    ...tuya.tz.datapoints,
+    key: [
+        'switch_1', 'switch_2', 'countdown_1', 'countdown_2', 'work_mode', 'bright_value', 'temp_value', 'illuminance_value', 
+          'presence_state', 'move_sensitivity', 'far_detection',   'target_dis_closest', 'fading_time', 'presence_sensitivity', 'man_state' 
+    ],
+}
 
 const definition = {
-    // Since a lot of TuYa devices use the same modelID, but use different datapoints
-    // it's necessary to provide a fingerprint instead of a zigbeeModel
-    fingerprint: [
-        {
-            // The model ID from: Device with modelID 'TS0601' is not supported
-            // You may need to add \u0000 at the end of the name in some cases
-            modelID: 'TS0601',
-            // The manufacturer name from: Device with modelID 'TS0601' is not supported.
-            manufacturerName: '_TZE204_ijxvkhd0',
-        },
-    ],
+    fingerprint: [ { modelID: 'TS0601', manufacturerName: '_TZE204_ijxvkhd0'}],
     model: 'ZY-M100-24G',
     vendor: 'TuYa',
     description: 'Micro Motion Sensor v1.2 ',
-    fromZigbee: [tuya.fz.datapoints],
-    toZigbee: [tuya.tz.datapoints],
-    onEvent: tuya.onEventSetTime, // Add this if you are getting no converter for 'commandMcuSyncTime'
     configure: tuya.configureMagicPacket,
+    fromZigbee: [tuya.fz.datapoints],
+    toZigbee: [tzDatapoints],
+
     exposes: [
-        e.illuminance(),
-        exposes.numeric('presence', ea.STATE).withDescription('Presence'),
-        exposes.numeric('target_distance', ea.STATE).withDescription('Distance to target').withUnit('m'),
-        exposes.numeric('radar_sensitivity', ea.STATE_SET).withValueMin(0).withValueMax(9).withValueStep(1)
-            .withDescription('sensitivity of the radar'),
-//        exposes.numeric('minimum_range', ea.STATE_SET).withValueMin(0).withValueMax(9.5).withValueStep(0.15)
-//            .withDescription('Minimum range').withUnit('m'),
-        exposes.numeric('maximum_range', ea.STATE_SET).withValueMin(0).withValueMax(9.5).withValueStep(0.15)
-            .withDescription('Maximum range').withUnit('m'),
-        exposes.numeric('detection_delay', ea.STATE_SET).withValueMin(0).withValueMax(10).withValueStep(0.1)
-            .withDescription('Detection delay').withUnit('s'),
-        exposes.numeric('static_sensitivity', ea.STATE_SET).withValueMin(0).withValueMax(9).withValueStep(1)
-            .withDescription('Static sensitivity'),
-        exposes.numeric('occupation', ea.STATE).withDescription('Occupation')    
-        // exposes.text('', ea.STATE).withDescription('not recognize'),
-        // Here you should put all functionality that your device exposes
+        exposes.numeric('illuminance_value', ea.STATE).withDescription('Illuminance').withUnit('lux'),
+        exposes.enum('presence_state', ea.STATE, ['none', 'presence', 'move']).withDescription('Presence'), 
+        exposes.numeric('move_sensitivity', ea.STATE_SET).withValueMin(1).withValueMax(10).withValueStep(1)
+            .withDescription('Move sensitivity'),        
+        exposes.numeric('far_detection', ea.STATE_SET).withValueMin(0).withValueMax(10).withValueStep(1)
+            .withDescription('Longest distance').withUnit('m'),
+        exposes.numeric('target_dis_closest', ea.STATE).withDescription('Distance to target').withUnit('m'),
+        exposes.numeric('fading_time', ea.STATE_SET).withValueMin(1).withValueMax(15).withValueStep(1)
+            .withDescription('Delay time').withUnit('s'),
+        exposes.numeric('presence_sensitivity', ea.STATE_SET).withValueMin(1).withValueMax(10).withValueStep(1)
+            .withDescription('Presence sensitivity'),     
+        exposes.enum('man_state', ea.STATE, ['nobody','exist']).withDescription('Presence state'),  
+
     ],
     meta: {
         // All datapoints go in here
         tuyaDatapoints: [
-            [104, 'illuminance', tuya.valueConverter.raw],
-            [105, 'occupation', tuya.valueConverterBasic.lookup({'none': 0, 'Occupied': 1, 'Move': 2})],
-            [106, 'radar_sensitivity', tuya.valueConverter.divideBy10],
-            [107, 'maximum_range', tuya.valueConverter.divideBy100],
-            [109, 'target_distance', tuya.valueConverter.divideBy100],
-            [110, 'detection_delay', tuya.valueConverter.divideBy10],
-            [111, 'static_sensitivity', tuya.valueConverter.divideBy10],
-            [112, 'presence',  tuya.valueConverterBasic.lookup({'None': 0, 'At home': 1, })]
-        ],
+            [104, 'illuminance_value', tuya.valueConverter.raw],
+            [105, 'presence_state',     tuya.valueConverterBasic.lookup({'none': tuya.enum(0), 'presence': tuya.enum(1), 'move': tuya.enum(2)})],   
+            [106, 'move_sensitivity', tuya.valueConverter.divideBy10],
+            [107, 'far_detection', tuya.valueConverter.divideBy100],
+            [109, 'target_dis_closest', tuya.valueConverter.divideBy100],
+            [110, 'fading_time', tuya.valueConverter.raw],
+            [111, 'presence_sensitivity', tuya.valueConverter.divideBy10],
+            [112, 'man_state',  tuya.valueConverterBasic.lookup({'nobody': tuya.enum(0), 'exist': tuya.enum(1) })],
+         ],
     },
-};
+  };
 
 module.exports = definition;
