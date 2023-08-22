@@ -28,31 +28,32 @@ const definition = {
     toZigbee: [tzDatapoints],
 
     exposes: [
-        exposes.numeric('illuminance_value', ea.STATE).withDescription('Illuminance').withUnit('lux'),
-        exposes.enum('presence_state', ea.STATE, ['none', 'presence', 'move']).withDescription('Presence'), 
-        exposes.numeric('move_sensitivity', ea.STATE_SET).withValueMin(1).withValueMax(10).withValueStep(1)
-            .withDescription('Move sensitivity'),        
-        exposes.numeric('far_detection', ea.STATE_SET).withValueMin(0).withValueMax(10).withValueStep(1)
-            .withDescription('Longest distance').withUnit('m'),
-        exposes.numeric('target_dis_closest', ea.STATE).withDescription('Distance to target').withUnit('m'),
+        e.illuminance_lux(), e.presence(),
+        //exposes.numeric('illuminance_value', ea.STATE).withDescription('Illuminance').withUnit('lux'),
+        exposes.enum('presence_state', ea.STATE, ['none', 'presence', 'moving']).withDescription('Presence'), 
+        exposes.numeric('motion_sensitivity', ea.STATE_SET).withValueMin(1).withValueMax(10).withValueStep(1)
+            .withDescription('Motion sensitivity'),        
+        exposes.numeric('detection_distance_max', ea.STATE_SET).withValueMin(0).withValueMax(10).withValueStep(1)
+            .withDescription('Max detection distance').withUnit('m'),
+        exposes.numeric('detection_distance_min', ea.STATE).withDescription('Distance to target').withUnit('m'),
         exposes.numeric('fading_time', ea.STATE_SET).withValueMin(1).withValueMax(15).withValueStep(1)
             .withDescription('Delay time').withUnit('s'),
         exposes.numeric('presence_sensitivity', ea.STATE_SET).withValueMin(1).withValueMax(10).withValueStep(1)
             .withDescription('Presence sensitivity'),     
-        exposes.enum('man_state', ea.STATE, ['nobody','exist']).withDescription('Presence state'),  
+        //exposes.enum('man_state', ea.STATE, ['nobody','exist']).withDescription('Presence state'),  
 
     ],
     meta: {
         // All datapoints go in here
         tuyaDatapoints: [
-            [104, 'illuminance_value', tuya.valueConverter.raw],
-            [105, 'presence_state',     tuya.valueConverterBasic.lookup({'none': tuya.enum(0), 'presence': tuya.enum(1), 'move': tuya.enum(2)})],   
-            [106, 'move_sensitivity', tuya.valueConverter.divideBy10],
-            [107, 'far_detection', tuya.valueConverter.divideBy100],
-            [109, 'target_dis_closest', tuya.valueConverter.divideBy100],
+            [104, 'illuminance_lux', tuya.valueConverter.raw],
+            [105, 'presence_state',     tuya.valueConverterBasic.lookup({'None': tuya.enum(0), 'Presence': tuya.enum(1), 'Move': tuya.enum(2)})],   
+            [106, 'motion_sensitivity', tuya.valueConverter.divideBy10],
+            [107, 'detection_distance_max', tuya.valueConverter.divideBy100],
+            [109, 'detection_distance_min', tuya.valueConverter.divideBy100],
             [110, 'fading_time', tuya.valueConverter.raw],
             [111, 'presence_sensitivity', tuya.valueConverter.divideBy10],
-            [112, 'man_state',  tuya.valueConverterBasic.lookup({'nobody': tuya.enum(0), 'exist': tuya.enum(1) })],
+            [112, 'presence',  tuya.valueConverter.trueFalse1],
          ],
     },
   };
